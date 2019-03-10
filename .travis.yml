@@ -1,0 +1,26 @@
+language: elixir
+
+elixir:
+  - '1.7'
+
+otp_release:
+  - '21.2'
+
+addons:
+  apt:
+    sources:
+      - sourceline: "deb http://packages.cloud.google.com/apt cloud-sdk-precise main"
+        key_url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    packages:
+      - google-cloud-sdk
+      - google-cloud-sdk-pubsub-emulator
+
+before_script:
+  - gcloud beta emulators pubsub start 2> log/pubsub.log &
+
+script:
+  - mix format --check-formatted
+  - mix test
+
+after_script:
+  - echo "PubSub Emulator Logs" && cat log/pubsub.log
